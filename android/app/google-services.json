@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "229086756101",
+    "project_id": "kombinapp-d2902",
+    "storage_bucket": "kombinapp-d2902.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229086756101:android:a75997fde69f8ac3a0cb6c",
+        "android_client_info": {
+          "package_name": "com.kombin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "229086756101-22pap84ltk9onrjg3i5kuhbmjup0hjpv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kombin",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "229086756101-h4g8e8dopm74dnua9o3gmocdmjlr5uuv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5e8UO5VaRV3SIV0y8deMd9xwBRNboSUQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "229086756101-4v5o7j4ukt1bs99dl3cev74ov558vfvm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "229086756101-o7ptftoo22r5p9gj24lk2eruog5dag3k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.Kombin"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
