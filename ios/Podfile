@@ -59,6 +59,10 @@ target 'Kombin' do
       config[:reactNativePath],
       :mac_catalyst_enabled => false
     )
+    # Bu satır image-picker-için-eklendi
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings["CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES"] = true
+    end
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
