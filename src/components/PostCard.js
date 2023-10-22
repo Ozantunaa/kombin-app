@@ -1,12 +1,15 @@
-import { StyleSheet, Text, View, ImageBackground, Image, Dimensions, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, ImageBackground, Image, Dimensions, TouchableOpacity, Button } from 'react-native'
 import React, { useState } from 'react'
 import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withDelay, withReanimatedTimer, withSpring, withTiming } from 'react-native-reanimated'
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler'
+import { useSelector } from 'react-redux'
+import moment from 'moment'
+import 'moment/locale/tr';
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
 
-const Swipable = ({item}) => {
+const Swipable = ({ item }) => {
     const translateX = useSharedValue(0)
     const panGesture = useAnimatedGestureHandler({
         onStart: (_, context) => {
@@ -32,14 +35,14 @@ const Swipable = ({item}) => {
         }]
     }))
     return (
-        <GestureHandlerRootView style={{ flex: 2}}>
+        <GestureHandlerRootView style={{ flex: 2 }}>
             <PanGestureHandler onGestureEvent={panGesture}>
                 <Animated.View style={[styles.swipableStyle, rStyle]}>
-                    <View style={styles.open}/>
-                    <CircleTouchbable iconName={'a'} text={item.likes}/>
-                    <CircleTouchbable iconName={'b'} text={item.comments}/>
-                    <CircleTouchbable iconName={'c'} text={'Save'}/>
-                    <CircleTouchbable iconName={'d'} text={'200'}/>
+                    <View style={styles.open} />
+                    <CircleTouchbable iconName={'a'} text={item.likes} />
+                    <CircleTouchbable iconName={'b'} text={item.comments} />
+                    <CircleTouchbable iconName={'c'} text={'Save'} />
+                    <CircleTouchbable iconName={'d'} text={'200'} />
                 </Animated.View>
             </PanGestureHandler>
         </GestureHandlerRootView>
@@ -47,43 +50,48 @@ const Swipable = ({item}) => {
 };
 const CircleTouchbable = ({ iconName, text }) => {
     return (
-      <TouchableOpacity style={styles.circleContainer}>
-        <View style={styles.circle}>
-         <Text>{iconName}</Text>
-        </View>
-        <Text style={styles.text}>{text}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.circleContainer}>
+            <View style={styles.circle}>
+                <Text>{iconName}</Text>
+            </View>
+            <Text style={styles.text}>{text}</Text>
+        </TouchableOpacity>
     );
-  };
+};
 
 
 
-const PostCard = ({ item }) => {
+const PostCard = ({ item, onDelete }) => {
     const [showMore, setShowMore] = useState(false);
+    const userInfo = useSelector(state => state.user.userInfo);
 
     const maxCharCount = 100;
 
-    const message = showMore ? item.post : item.post.length <= maxCharCount ? item.post : item.post.slice(0, maxCharCount) + '...';
+   // const message = showMore ? item.post : item.post.length <= maxCharCount ? item.post : item.post.slice(0, maxCharCount) + '...';
+    const message = showMore ? item.post : (!item.post || item.post.length <= maxCharCount) ? item.post : item.post.slice(0, maxCharCount) + '...';
 
     const toggleShowMore = () => {
         setShowMore(!showMore);
     };
 
+
     return (
         <ImageBackground
-            source={item.postImg}
+            source={{ uri: item.postImg }}
             style={styles.postcard}
         >
-            <Swipable item={item}/>
+            <Swipable item={item} />
             <View style={styles.postcardContent}>
                 <View style={styles.bottomInfo}>
                     <View style={styles.senderTop}>
-                        <Image style={styles.senderImage} source={item.userImg} />
+                        <Image style={styles.senderImage} source={{ uri: item.userImg }} />
                         <Text style={styles.senderText}>{item.userName}</Text>
+                        {item.userId == userInfo.user.id ? <Button onPress={() => onDelete(item.id)} title='sil' color={'red'} /> : null}
+                        <Text>{moment(item.postTime.toDate()).locale('tr').fromNow()}</Text>
                     </View>
                     <View style={styles.senderBottom}>
                         <Text style={styles.messageText}>{message}</Text>
-                        {item.post.length > 100 && (
+                        {item.post?.length > 100 && (
                             <TouchableOpacity onPress={toggleShowMore}>
                                 <Text style={styles.showMoreText}>
                                     {showMore ? 'Kapat' : 'Devamı'}
@@ -140,7 +148,7 @@ const styles = StyleSheet.create({
         marginVertical: 10
     },
     senderBottom: {
-        alignItems: 'center',
+        alignItems: 'flex-start',
         justifyContent: 'flex-start',
         marginBottom: 10,
         width: 310,
@@ -159,19 +167,19 @@ const styles = StyleSheet.create({
         top: height / 18,
         borderTopLeftRadius: 28,
         borderBottomLeftRadius: 28,
-        justifyContent:'center',
+        justifyContent: 'center',
     },
-    open:{
-        backgroundColor:'white',
-        width:6,
-        height:35,
+    open: {
+        backgroundColor: 'white',
+        width: 6,
+        height: 35,
         position: 'absolute',
-        borderRadius:10,
-        marginLeft:6
+        borderRadius: 10,
+        marginLeft: 6
     },
-    circleContainer:{
-        alignItems:'center',
-        marginBottom:8,
+    circleContainer: {
+        alignItems: 'center',
+        marginBottom: 8,
     },
     circle: {
         width: 50,
@@ -181,9 +189,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 5,
-      },
-      text: {
+    },
+    text: {
         fontSize: 10,
-        color:'white'
-      },
+        color: 'white'
+    },
 })
