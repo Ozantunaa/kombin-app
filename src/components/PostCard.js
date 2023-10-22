@@ -86,7 +86,7 @@ const PostCard = ({ item, onDelete }) => {
                     <View style={styles.senderTop}>
                         <Image style={styles.senderImage} source={{ uri: item.userImg }} />
                         <Text style={styles.senderText}>{item.userName}</Text>
-                        {item.userId == userInfo.user.id ? <Button onPress={() => onDelete(item.id)} title='sil' color={'red'} /> : null}
+                        {item.userId == userInfo?.user.id ? <Button onPress={() => onDelete(item.id)} title='sil' color={'red'} /> : null}
                         <Text>{moment(item.postTime.toDate()).locale('tr').fromNow()}</Text>
                     </View>
                     <View style={styles.senderBottom}>
