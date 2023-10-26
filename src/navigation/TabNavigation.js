@@ -2,10 +2,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Discover from '../screens/Discover';
 import Shop from '../screens/Shop';
 import Upload from '../screens/Upload';
-import Settings from '../screens/Settings';
 import Market from '../screens/Market';
 import { StyleSheet, Text, View } from 'react-native';
-
+import { DiscoverStack, ProfileStack } from './MainNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -13,6 +12,7 @@ const TabNavigation = () => {
     return (
         <Tab.Navigator
             sceneContainerStyle={{ backgroundColor: 'white' }}
+            /* Bu Custom tabbar için */
             /* screenOptions={{
                 tabBarShowLabel: true,
                 tabBarStyle: {
@@ -29,8 +29,8 @@ const TabNavigation = () => {
             }} */
         >
             <Tab.Screen
-                name='Discover'
-                component={Discover}
+                name='DiscoverStack'
+                component={DiscoverStack}
                 options={{
                     tabBarLabel: 'Keşfet',
                     headerShown: false
@@ -58,11 +58,11 @@ const TabNavigation = () => {
                 }}
             />
             <Tab.Screen
-                name='Settings'
-                component={Settings}
+                name='ProfileStack'
+                component={ProfileStack}
                 options={{
-                    tabBarLabel: 'Ayarlar',
-                    headerShown: false
+                    tabBarLabel: 'Profil',
+                    headerShown: false,
                 }}
             />
 

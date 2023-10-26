@@ -6,10 +6,62 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setUserInfo } from '../store/userSlice';
 import { checkPreviousSignIn } from '../utils/checkPreviousSignIn';
 import LoadingScreen from '../screens/LoadingScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
+import Discover from '../screens/Discover';
 
 
 const Stack = createStackNavigator();
 
+export const ProfileStack = ({ navigation }) => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name='Profil'
+      component={ProfileScreen}
+      options={{
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name='EditProfileScreen'
+      component={EditProfileScreen}
+      options={{
+        headerTitle: 'Profili Düzenle',
+        headerBackTitleVisible: false,
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#fff',
+          shadowColor: '#fff',
+          elevation: 0
+        }
+      }}
+    />
+  </Stack.Navigator>
+);
+export const DiscoverStack = ({ navigation }) => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name='Discover'
+      component={Discover}
+      options={{
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name='DiscoverProfile'
+      component={ProfileScreen}
+      options={{
+        title: '',
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#fff',
+          shadowColor: '#fff',
+          elevation: 0
+        }
+      }}
+    />
+  </Stack.Navigator>
+);
 const MainNavigator = () => {
   const isLoggedIn = useSelector(state => state.user.isLoggedIn);
   const dispatch = useDispatch();

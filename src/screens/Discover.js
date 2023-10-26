@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Alert, RefreshControl, StyleSheet } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import PostCard from '../components/PostCard';
@@ -67,7 +67,7 @@ const Posts = [
     comments: '0',
   },
 ];
-const Discover = () => {
+const Discover = ({ navigation }) => {
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(true);
   const [deleted, setDeleted] = useState(false);
@@ -181,7 +181,7 @@ const Discover = () => {
       setRefreshing(false);
     }, 2000);
   }, []);
-  
+
   return (
     <>
       <FlatList
@@ -189,10 +189,11 @@ const Discover = () => {
         contentContainerStyle={styles.container}
         renderItem={({ item }) => (
           <PostCard
+            onPress={() => navigation.navigate('DiscoverProfile', { userId: item.userId })}
             item={item} onDelete={handleDelete} />)}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
 
 

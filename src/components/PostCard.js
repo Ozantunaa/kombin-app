@@ -61,7 +61,7 @@ const CircleTouchbable = ({ iconName, text }) => {
 
 
 
-const PostCard = ({ item, onDelete }) => {
+const PostCard = ({ item, onDelete,onPress }) => {
     const [showMore, setShowMore] = useState(false);
     const userInfo = useSelector(state => state.user.userInfo);
 
@@ -85,7 +85,9 @@ const PostCard = ({ item, onDelete }) => {
                 <View style={styles.bottomInfo}>
                     <View style={styles.senderTop}>
                         <Image style={styles.senderImage} source={{ uri: item.userImg }} />
+                        <TouchableOpacity onPress={onPress}>
                         <Text style={styles.senderText}>{item.userName}</Text>
+                        </TouchableOpacity>
                         {item.userId == userInfo?.user.id ? <Button onPress={() => onDelete(item.id)} title='sil' color={'red'} /> : null}
                         <Text>{moment(item.postTime.toDate()).locale('tr').fromNow()}</Text>
                     </View>
