@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View, ImageBackground, Image, Dimensions, TouchableOpacity, Button } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withDelay, withReanimatedTimer, withSpring, withTiming } from 'react-native-reanimated'
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
 import 'moment/locale/tr';
+import firestore, { firebase } from '@react-native-firebase/firestore';
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
@@ -64,16 +65,34 @@ const CircleTouchbable = ({ iconName, text }) => {
 const PostCard = ({ item, onDelete,onPress }) => {
     const [showMore, setShowMore] = useState(false);
     const userInfo = useSelector(state => state.user.userInfo);
-
+    const [userData, setUserData] = useState(null);
+    const user = firebase.auth().currentUser;
+    
+    
     const maxCharCount = 100;
-
-   // const message = showMore ? item.post : item.post.length <= maxCharCount ? item.post : item.post.slice(0, maxCharCount) + '...';
+    
+    // const message = showMore ? item.post : item.post.length <= maxCharCount ? item.post : item.post.slice(0, maxCharCount) + '...';
     const message = showMore ? item.post : (!item.post || item.post.length <= maxCharCount) ? item.post : item.post.slice(0, maxCharCount) + '...';
-
+    
     const toggleShowMore = () => {
         setShowMore(!showMore);
     };
-
+    useEffect(() => {
+     getUser();
+    }, [])
+    console.log(item,'???item');
+    const getUser = async () => {
+        await firestore()
+          .collection('users')
+          .doc(item.userId)
+          .get()
+          .then((documentSnapshot) => {
+            if (documentSnapshot.exists) {
+              console.log('User Data', documentSnapshot.data());
+              setUserData(documentSnapshot.data());
+            }
+          })
+      }
 
     return (
         <ImageBackground
@@ -84,9 +103,9 @@ const PostCard = ({ item, onDelete,onPress }) => {
             <View style={styles.postcardContent}>
                 <View style={styles.bottomInfo}>
                     <View style={styles.senderTop}>
-                        <Image style={styles.senderImage} source={{ uri: item.userImg }} />
+                        <Image style={styles.senderImage} source={{ uri:  userData ? userData.userImg : 'https://i.pinimg.com/originals/da/57/80/da5780f125af8ccbed7a84150e89fcad.png' }} />
                         <TouchableOpacity onPress={onPress}>
-                        <Text style={styles.senderText}>{item.userName}</Text>
+                        <Text style={styles.senderText}>{userData ? userData.name : 'Test'}</Text>
                         </TouchableOpacity>
                         {item.userId == userInfo?.user.id ? <Button onPress={() => onDelete(item.id)} title='sil' color={'red'} /> : null}
                         <Text>{moment(item.postTime.toDate()).locale('tr').fromNow()}</Text>

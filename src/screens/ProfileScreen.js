@@ -3,18 +3,35 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { StyleSheet, Text, View, ScrollView, Image, Pressable, TouchableOpacity, SafeAreaView } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUserInfo } from '../store/userSlice';
-import firestore from '@react-native-firebase/firestore';
+import firestore, { firebase } from '@react-native-firebase/firestore';
 import PostCard from '../components/PostCard';
 
 const ProfileScreen = ({ navigation, route }) => {
   const userInfo = useSelector(state => state.user.userInfo);
   const dispatch = useDispatch();
   const [posts, setPosts] = useState([]);
+  const [userData, setUserData] = useState(null);
+  const user = firebase.auth().currentUser;
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchPosts()
-  }, [])
+    getUser()
+    navigation.addListener("focus", () => setLoading(!loading))
+  }, [navigation, loading])
 
+  const getUser = async () => {
+    await firestore()
+      .collection('users')
+      .doc(route.params ? route.params.userId : user.uid)
+      .get()
+      .then((documentSnapshot) => {
+        if (documentSnapshot.exists) {
+          console.log('User Data', documentSnapshot.data());
+          setUserData(documentSnapshot.data());
+        }
+      })
+  }
   const handleSignOut = async () => {
     try {
       await GoogleSignin.signOut()
@@ -27,7 +44,7 @@ const ProfileScreen = ({ navigation, route }) => {
       const list = [];
       await firestore()
         .collection('posts')
-        .where('userId', '==', userInfo.user.id)
+        .where('userId', '==',  userInfo.user.id)
         .orderBy('postTime', 'desc')
         .get()
         .then((querySnapshot) => {
@@ -48,7 +65,7 @@ const ProfileScreen = ({ navigation, route }) => {
             })
           })
         })
-      console.log('POSTS', list);
+      //console.log('POSTS', list);
       setPosts(list)
       if (loading) {
         setLoading(false);
@@ -67,13 +84,13 @@ const ProfileScreen = ({ navigation, route }) => {
         {userInfo?.user?.photo && (
           <Image
             style={styles.profilePhoto}
-            source={{ uri: userInfo.user.photo }}
+            source={{ uri: userData ? userData.userImg : 'https://i.pinimg.com/originals/da/57/80/da5780f125af8ccbed7a84150e89fcad.png' }}
           />
         )}
         {userInfo?.user?.givenName && (
-          <Text style={styles.nameText}>{userInfo.user.givenName}</Text>
+          <Text style={styles.nameText}>{userData ? userData.name : userInfo.user.givenName}</Text>
         )}
-        <Text style={styles.descriptionText}>Bu kısım kullanıcı ile ilgili bilgilerin vs olduğu kısım olcaktır. sonrasına bakacağız.</Text>
+        <Text style={styles.descriptionText}>{userData ? userData.about || 'Profil açıklaması girmedin! :(' : ''}</Text>
         {route.params ? (
           <View style={styles.userButtonsContainer}>
             <TouchableOpacity style={styles.button} onPress={() => { }}>
@@ -85,10 +102,10 @@ const ProfileScreen = ({ navigation, route }) => {
           </View>
         ) : (
           <View style={styles.userButtonsContainer}>
-            <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate('EditProfileScreen')}}>
+            <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate('EditProfileScreen') }}>
               <Text style={styles.buttonText}>Düzenle</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => {handleSignOut() }}>
+            <TouchableOpacity style={styles.button} onPress={() => { handleSignOut() }}>
               <Text style={styles.buttonText}>Çıkış yap</Text>
             </TouchableOpacity>
           </View>
@@ -96,7 +113,7 @@ const ProfileScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.userInfoContainer}>
         <View style={styles.box}>
-          <Text style={styles.contentTitle}>22</Text>
+          <Text style={styles.contentTitle}>{posts.length}</Text>
           <Text style={styles.contentDescription}>Posts</Text>
         </View>
         <View style={styles.box}>
@@ -134,7 +151,7 @@ const styles = StyleSheet.create({
   profilePhoto: {
     width: 130,
     height: 130,
-    backgroundColor: 'red',
+    backgroundColor: 'green',
     borderRadius: 100,
     marginBottom: 10
   },

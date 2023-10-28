@@ -107,7 +107,7 @@ const Discover = ({ navigation }) => {
             })
           })
         })
-      console.log('POSTS', list);
+      //console.log('POSTS', list);
       setPosts(list)
       if (loading) {
         setLoading(false);
